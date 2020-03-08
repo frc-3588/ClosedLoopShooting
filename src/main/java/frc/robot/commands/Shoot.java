@@ -8,9 +8,10 @@
 // update. Deleting the comments indicating the section will prevent
 // it from being updated in the future.
 
-
 package frc.robot.commands;
+
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
@@ -38,31 +39,79 @@ public class Shoot extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        Robot.shooter.setProportionalGain(Robot.shooter.kP);
+        Robot.shooter.setIntegralGain(Robot.shooter.kI);
+        Robot.shooter.setDerivativeGain(Robot.shooter.kD);
+        Robot.shooter.setIntegralZone(Robot.shooter.kIz);
+        Robot.shooter.setFeedForward(Robot.shooter.kFF);
+        Robot.shooter.setPowerRange(Robot.shooter.kMinOutput, 
+            Robot.shooter.kMaxOutput);
+
+        SmartDashboard.putNumber("P Gain", Robot.shooter.kP);
+        SmartDashboard.putNumber("I Gain", Robot.shooter.kI);
+        SmartDashboard.putNumber("D Gain", Robot.shooter.kD);
+        SmartDashboard.putNumber("I Zone", Robot.shooter.kIz);
+        SmartDashboard.putNumber("Feed Forward", Robot.shooter.kFF);
+        SmartDashboard.putNumber("Max Output", Robot.shooter.kMaxOutput);
+        SmartDashboard.putNumber("Min Output", Robot.shooter.kMinOutput);
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        double p = SmartDashboard.getNumber("P Gain", 0);
+        double i = SmartDashboard.getNumber("I Gain", 0);
+        double d = SmartDashboard.getNumber("D Gain", 0);
+        double iz = SmartDashboard.getNumber("I Zone", 0);
+        double ff = SmartDashboard.getNumber("Feed Forward", 0);
+        double max = SmartDashboard.getNumber("Max Output", 0);
+        double min = SmartDashboard.getNumber("Min Output", 0);
+        
+        if(p != Robot.shooter.kP) {
+            Robot.shooter.setProportionalGain(p);
+            Robot.shooter.kP = p;
+        }
+
+        if(i != Robot.shooter.kI) {
+            Robot.shooter.setProportionalGain(i);
+            Robot.shooter.kI = i;
+        }
+
+        if(d != Robot.shooter.kD) {
+            Robot.shooter.setProportionalGain(d);
+            Robot.shooter.kD = d;
+        }
+
+        if(iz != Robot.shooter.kIz) {
+            Robot.shooter.setProportionalGain(iz);
+            Robot.shooter.kIz = iz;
+        }
+
+        if(ff != Robot.shooter.kFF) {
+            Robot.shooter.setProportionalGain(ff);
+            Robot.shooter.kFF = ff;
+        }
+
+        if((max != Robot.shooter.kMaxOutput) || (min != Robot.shooter.kMinOutput)) {
+            Robot.shooter.setPowerRange(min, max);
+            Robot.shooter.kMaxOutput =  max;
+            Robot.shooter.kMinOutput = min;
+        }
+
         if(Robot.oi.operatorController.getRawButton(Robot.oi.FRONTPOWERPORTSHOOT)) {
-            Robot.shooter.setProportionalGain(Robot.shooter.kP);
-            Robot.shooter.setIntegralGain(Robot.shooter.kP);
-            Robot.shooter.setDerivativeGain(Robot.shooter.kP);
-            Robot.shooter.setFeedForward(Robot.shooter.kP);
             Robot.shooter.runPID(Robot.shooter.FRONTPOWERPORTRPM);
+            SmartDashboard.putNumber("Setpoint", Robot.shooter.FRONTPOWERPORTRPM);
+            SmartDashboard.putNumber("ProcessVariable", Robot.shooter.getEncoderVelocity());
         }
         if(Robot.oi.operatorController.getRawButton(Robot.oi.FRONTCONTROLPANELSHOOT)) {
-            Robot.shooter.setProportionalGain(Robot.shooter.kP);
-            Robot.shooter.setIntegralGain(Robot.shooter.kP);
-            Robot.shooter.setDerivativeGain(Robot.shooter.kP);
-            Robot.shooter.setFeedForward(Robot.shooter.kP);
             Robot.shooter.runPID(Robot.shooter.FRONTCONTROLPANELRPM);
+            SmartDashboard.putNumber("Setpoint", Robot.shooter.FRONTCONTROLPANELRPM);
+            SmartDashboard.putNumber("ProcessVariable", Robot.shooter.getEncoderVelocity());
         }
         if(Robot.oi.operatorController.getRawButton(Robot.oi.BACKCONTROLPANELSHOOT)) {
-            Robot.shooter.setProportionalGain(Robot.shooter.kP);
-            Robot.shooter.setIntegralGain(Robot.shooter.kP);
-            Robot.shooter.setDerivativeGain(Robot.shooter.kP);
-            Robot.shooter.setFeedForward(Robot.shooter.kP);
             Robot.shooter.runPID(Robot.shooter.BACKCONTROLPANELRPM);
+            SmartDashboard.putNumber("Setpoint", Robot.shooter.BACKCONTROLPANELRPM);
+            SmartDashboard.putNumber("ProcessVariable", Robot.shooter.getEncoderVelocity());
         }
     }
 

@@ -96,6 +96,9 @@ public class Shooter extends Subsystem {
     public void setDerivativeGain(double D) {
         pidShooterController.setD(D);
     }
+    public void setIntegralZone(double IZ) {
+        pidShooterController.setIZone(IZ);
+    }
     public void setFeedForward(double FF) {
         pidShooterController.setFF(FF);
     }
@@ -104,6 +107,9 @@ public class Shooter extends Subsystem {
     }
     public void runPID(double RPM) {
         pidShooterController.setReference(RPM, ControlType.kVelocity);
+    }
+    public double getEncoderVelocity() {
+       return shooterEncoder.getVelocity();
     }
 }
 
